@@ -1,0 +1,32 @@
+name: Build APK
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip build-essential git
+          pip install --upgrade pip setuptools
+          pip install buildozer cython kivy
+
+      - name: Build APK with Buildozer
+        run: |
+          sudo apt install -y libffi-dev libssl-dev libsqlite3-dev
+          buildozer init
+          buildozer android debug
+        working-directory: .
